@@ -8,6 +8,7 @@ import { MapPin, Search, ChevronRight, FileText, Info, BarChart3, MessageSquare,
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import { GazetteMonitor } from './components/GazetteMonitor';
+import { DocumentUploader } from './components/DocumentUploader';
 
 export default function App() {
   const [selectedCounty, setSelectedCounty] = React.useState<County | null>(null);
@@ -174,6 +175,7 @@ export default function App() {
 
         {/* Right Pane: Alerts */}
         <aside className="lg:col-span-3 space-y-6">
+          <DocumentUploader countyId={selectedCounty?.id || null} />
           <GazetteMonitor />
 
           <div className="p-4 bg-slate-900 text-white rounded-2xl space-y-4">

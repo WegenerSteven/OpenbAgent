@@ -46,8 +46,27 @@ export function WatchdogChat({ document }: WatchdogChatProps) {
     setIsLoading(true);
 
     try {
-      const context = document ? document.content : "No document selected. Provide general civic education on Kenyan county budgets.";
-      const answer = await askWatchdog(input, context);
+      // 1. Fetch relevant context from backend (RAG Retrieval)
+      const contextRes = await fetch('/api/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: input,
+          countyId: document?.id ? undefined : 'nairobi',
+          docId: document?.id
+        }),
+      });
+
+      if (!contextRes.ok) throw new Error('Context retrieval failed');
+      const { context } = await contextRes.json();
+      
+      // 2. Perform Inference on Frontend (RAG Generation)
+      const fullContext = document 
+        ? `${context}\n\nSTATIC_DOC_CONTENT: ${document.content}`
+        : context;
+        
+      const answer = await askWatchdog(input, fullContext);
+      
       const botMsg: Message = { id: (Date.now() + 1).toString(), role: 'bot', text: answer };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
