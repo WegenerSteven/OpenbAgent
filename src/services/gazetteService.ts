@@ -1,36 +1,20 @@
-import { GoogleGenAI } from "@google/genai";
 import { GazetteNotice } from "../data";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
-
 export async function processGazetteNotice(rawText: string, countyId: string): Promise<Partial<GazetteNotice>> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not configured.');
-  }
-
-  const systemInstruction = `
-You are an expert budget analyst for the Kenya Gazette. 
-Your task is to extract budget-related amendments from raw text of a gazette notice.
-
-Return a JSON object with:
-- summary: A plain-language summary of the budget change.
-- impact: "High", "Medium", or "Low" based on the scale of reallocation or change.
-- date: The date mentioned in the notice (YYYY-MM-DD format if possible, else just text).
-
-Focus on: Supplementary budgets, reallocations, new levies, or changes in project funding.
-`;
-
   try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [{ role: 'user', parts: [{ text: rawText }] }],
-      config: {
-        systemInstruction,
-        responseMimeType: "application/json"
-      }
+    const response = await fetch('/api/process-gazette', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ rawText, countyId }),
     });
 
-    const result = JSON.parse(response.text || '{}');
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
+    }
+
+    const result = await response.json();
     return {
       ...result,
       countyId,
