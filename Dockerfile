@@ -20,6 +20,9 @@ FROM node:20-slim
 
 WORKDIR /app
 
+# Set production environment
+ENV NODE_ENV=production
+
 # Copy built files and dependencies
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
