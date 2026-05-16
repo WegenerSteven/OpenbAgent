@@ -17,6 +17,15 @@ An AI-powered transparency platform for Kenyan citizens to monitor county budget
 - **Deployment**: Dockerized for Google Cloud Run.
 - **AI**: Google Gemini 1.5 Pro with long-context capabilities.
 
+## Team Members
+- Vivian
+- Benard
+- Monica
+- Francis
+
+##Demo link
+[OpenbAgent](https://county-budget-watchdog-127640723266.europe-west2.run.app)
+
 ## Getting Started
 
 ### Prerequisites
